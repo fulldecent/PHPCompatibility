@@ -11,7 +11,6 @@
 namespace PHPCompatibility\Tests\Syntax;
 
 use PHPCompatibility\Tests\BaseSniffTest;
-use PHPCompatibility\PHPCSHelper;
 
 /**
  * Use of flexible heredoc/nowdoc syntax and identifiers in heredoc/nowdoc body tests.
@@ -38,13 +37,6 @@ class NewFlexibleHeredocNowdocUnitTest extends BaseSniffTest
      */
     protected static $php73plus;
 
-    /**
-     * Whether PHPCS < 2.6.0 is detected.
-     *
-     * @var bool
-     */
-    protected static $isLowPHPCS = false;
-
 
     /**
      * Set up skip condition based on used PHP version.
@@ -70,23 +62,6 @@ class NewFlexibleHeredocNowdocUnitTest extends BaseSniffTest
 
 
     /**
-     * Set up skip condition for low PHPCS versions.
-     *
-     * @return void
-     */
-    public static function setUpBeforeClass()
-    {
-        // When using PHPCS 2.5.1 and lower, the tokenizer has an insurmountable bug
-        // parsing flexible heredoc/nowdocs.
-        if (version_compare(PHPCSHelper::getVersion(), '2.6.0', '<')) {
-            self::$isLowPHPCS = true;
-        }
-
-        parent::setUpBeforeClass();
-    }
-
-
-    /**
      * Test detection of indented heredoc/nowdoc closing markers.
      *
      * @dataProvider dataIndentedHeredocNowdoc
@@ -99,11 +74,6 @@ class NewFlexibleHeredocNowdocUnitTest extends BaseSniffTest
      */
     public function testIndentedHeredocNowdoc($fileNumber, $line, $skipNoViolation = false)
     {
-        if (self::$isLowPHPCS === true) {
-            $this->markTestSkipped('Flexible heredoc/nowdoc can not be detected due to Tokenizer errors in PHPCS < 2.6.0.');
-            return;
-        }
-
         $fileName = __DIR__ . '/' . sprintf(self::TEST_FILE, $fileNumber);
 
         $file = $this->sniffFile($fileName, '7.2');
@@ -155,11 +125,6 @@ class NewFlexibleHeredocNowdocUnitTest extends BaseSniffTest
      */
     public function testCodeAfterHeredocNowdoc($fileNumber, $line, $skipNoViolation = false)
     {
-        if (self::$isLowPHPCS === true) {
-            $this->markTestSkipped('Flexible heredoc/nowdoc can not be detected due to Tokenizer errors in PHPCS < 2.6.0.');
-            return;
-        }
-
         $fileName = __DIR__ . '/' . sprintf(self::TEST_FILE, $fileNumber);
 
         $file = $this->sniffFile($fileName, '7.2');
