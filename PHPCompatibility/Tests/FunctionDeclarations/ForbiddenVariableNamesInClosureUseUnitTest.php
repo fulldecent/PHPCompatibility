@@ -11,7 +11,6 @@
 namespace PHPCompatibility\Tests\FunctionDeclarations;
 
 use PHPCompatibility\Tests\BaseSniffTest;
-use PHPCompatibility\PHPCSHelper;
 
 /**
  * PHP 7.1 Forbidden variable names in closure use statements tests.
@@ -128,11 +127,6 @@ class ForbiddenVariableNamesInClosureUseUnitTest extends BaseSniffTest
      */
     public function testNoFalsePositivesLiveCoding($line)
     {
-        if (strpos(PHPCSHelper::getVersion(), '2.5.1') !== false) {
-            $this->markTestSkipped('PHPCS 2.5.1 has a bug in the tokenizer which affects this test.');
-            return;
-        }
-
         $file = $this->sniffFile(__DIR__ . '/' . self::TEST_FILE_LIVE_CODING, '7.1');
         $this->assertNoViolation($file, $line);
     }
