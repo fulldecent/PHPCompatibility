@@ -35,16 +35,6 @@ class ForbiddenBreakContinueOutsideLoopSniff extends Sniff
     );
 
     /**
-     * Token codes which did not correctly get a condition assigned in older PHPCS versions.
-     *
-     * @var array
-     */
-    protected $backCompat = array(
-        \T_CASE    => true,
-        \T_DEFAULT => true,
-    );
-
-    /**
      * Returns an array of tokens this test wants to listen for.
      *
      * @return array
@@ -77,11 +67,6 @@ class ForbiddenBreakContinueOutsideLoopSniff extends Sniff
                 if (isset($this->validLoopStructures[$tokenCode]) === true) {
                     return;
                 }
-            }
-        } else {
-            // Deal with older PHPCS versions.
-            if (isset($token['scope_condition']) === true && isset($this->backCompat[$tokens[$token['scope_condition']]['code']]) === true) {
-                return;
             }
         }
 
