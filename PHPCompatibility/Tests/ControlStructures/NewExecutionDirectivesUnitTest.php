@@ -33,11 +33,13 @@ class NewExecutionDirectivesUnitTest extends BaseSniffTest
     /**
      * Set up the test file for some of these unit tests.
      *
+     * @before
+     *
      * @return void
      */
-    protected function setUp()
+    protected function setUpFile()
     {
-        parent::setUp();
+        parent::setUpPHPCS();
 
         // Sniff file without testVersion for testing the version independent sniff features.
         $this->sniffResult = $this->sniffFile(__FILE__);

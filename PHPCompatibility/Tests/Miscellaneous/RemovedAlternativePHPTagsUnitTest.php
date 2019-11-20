@@ -34,9 +34,11 @@ class RemovedAlternativePHPTagsUnitTest extends BaseSniffTest
     /**
      * Set up skip condition.
      *
+     * @beforeClass
+     *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function setUpSkipCondition()
     {
         if (version_compare(\PHP_VERSION_ID, '70000', '<')) {
             // phpcs:ignore PHPCompatibility.IniDirectives.RemovedIniDirectives.asp_tagsRemoved

@@ -10,7 +10,7 @@
 
 namespace PHPCompatibility\Tests;
 
-use PHPUnit_Framework_TestCase as PHPUnit_TestCase;
+use PHPUnit\Framework\TestCase;
 use PHPCompatibility\PHPCSHelper;
 use PHP_CodeSniffer_File as File;
 
@@ -20,7 +20,7 @@ use PHP_CodeSniffer_File as File;
  * Adds PHPCS sniffing logic and custom assertions for PHPCS errors and
  * warnings.
  */
-class BaseSniffTest extends PHPUnit_TestCase
+class BaseSniffTest extends TestCase
 {
 
     /**
@@ -49,22 +49,26 @@ class BaseSniffTest extends PHPUnit_TestCase
     public static $sniffFiles = array();
 
     /**
-     * Sets up this unit test.
+     * Reset the sniff file cache before/after each test class.
+     *
+     * @beforeClass
+     * @afterClass
      *
      * @return void
      */
-    public static function setUpBeforeClass()
+    public static function resetSniffFiles()
     {
         self::$sniffFiles = array();
-        parent::setUpBeforeClass();
     }
 
     /**
      * Sets up this unit test.
      *
+     * @before
+     *
      * @return void
      */
-    protected function setUp()
+    protected function setUpPHPCS()
     {
         if (class_exists('\PHP_CodeSniffer') === true) {
             /*
@@ -81,29 +85,19 @@ class BaseSniffTest extends PHPUnit_TestCase
 
             self::$phpcs->setIgnorePatterns(array());
         }
-
-        parent::setUp();
     }
 
     /**
-     * Tear down after each test.
+     * Reset the testVersion after each test.
+     *
+     * @after
      *
      * @return void
      */
-    public function tearDown()
+    public function resetTestVersion()
     {
         // Reset the targetPhpVersion.
         PHPCSHelper::setConfigData('testVersion', null, true);
-    }
-
-    /**
-     * Tear down after each test.
-     *
-     * @return void
-     */
-    public static function tearDownAfterClass()
-    {
-        self::$sniffFiles = array();
     }
 
     /**
@@ -232,11 +226,15 @@ class BaseSniffTest extends PHPUnit_TestCase
         }
 
         $insteadMessagesString = implode(', ', $insteadFoundMessages);
-        return $this->assertContains(
-            $expectedMessage,
-            $insteadMessagesString,
-            "Expected $type message '$expectedMessage' on line $lineNumber not found. Instead found: $insteadMessagesString."
-        );
+
+        $msg = "Expected $type message '$expectedMessage' on line $lineNumber not found. Instead found: $insteadMessagesString.";
+
+        if (method_exists($this, 'assertStringContainsString') === false) {
+            // PHPUnit < 7.
+            return $this->assertContains($expectedMessage, $insteadMessagesString, $msg);
+        }
+
+        return $this->assertStringContainsString($expectedMessage, $insteadMessagesString, $msg);
     }
 
     /**
